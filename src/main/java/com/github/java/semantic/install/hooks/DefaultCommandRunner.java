@@ -16,7 +16,7 @@ public class DefaultCommandRunner implements CommandRunner {
     }
 
     @Override
-    public String run(Path workingDir, String... command) {
+    public void run(Path workingDir, String... command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(command);
             if (workingDir != null) {
@@ -37,7 +37,7 @@ public class DefaultCommandRunner implements CommandRunner {
             }
 
             log.debug(output);
-            return StringUtils.defaultIfBlank(output, null);
+            StringUtils.defaultIfBlank(output, null);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);

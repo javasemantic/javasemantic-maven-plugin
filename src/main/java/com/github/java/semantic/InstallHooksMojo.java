@@ -5,8 +5,6 @@ import com.github.java.semantic.install.hooks.CommandRunner;
 import com.github.java.semantic.install.hooks.DefaultCommandRunner;
 import com.github.java.semantic.install.hooks.DefaultExecutable;
 import com.github.java.semantic.install.hooks.Executable;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,16 +30,16 @@ import org.apache.commons.exec.OS;
 import static java.util.Optional.ofNullable;
 
 /**
- * Installs git hooks on each initialization. Hooks are always overriden in case of changes in:
+ * Installs git hooks on each initialization. Hooks are always overridden in case of changes in:
  *
  * <ul>
  *   <li>maven installation
  *   <li>plugin structure
  * </ul>
  */
+
 @Mojo(name = "install-hooks", defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true)
 public class InstallHooksMojo extends AbstractMojo {
-
 
     private static final String BASE_PLUGIN_PRE_COMMIT_HOOK = "java-semantic-maven-plugin.commit-msg.sh";
     private static final String COMMIT_MSG_HOOK_BASE_SCRIPT = "commit-msg";
@@ -80,10 +78,6 @@ public class InstallHooksMojo extends AbstractMojo {
     @Parameter(property = "gcf.propertiesToAdd")
     private String[] propertiesToAdd;
 
-    @Parameter(property = "gcf.debug", defaultValue = "true")
-    private boolean debug;
-
-
     /**
      * Add pipeline to process the results of the pre-commit hook. Exit non-zero to prevent the commit
      */
@@ -105,7 +99,6 @@ public class InstallHooksMojo extends AbstractMojo {
             }
             return;
         }
-
         try {
             getLog().info("Installing git hooks.");
             doExecute();
@@ -117,30 +110,28 @@ public class InstallHooksMojo extends AbstractMojo {
 
     private void doExecute() throws IOException {
         Path hooksDirectory = prepareHooksDirectory();
-
-        writePluginHooks(hooksDirectory);
-
+        writePluginHooks(hooksDirectory, pluginPreCommitHookFileName());
+        writePluginHooks(hooksDirectory, COMMIT_MSG_HOOK_BASE_SCRIPT);
         configureHookBaseScripts(hooksDirectory);
     }
 
-    private void configureHookBaseScripts(Path hooksDirectory) throws IOException {
-        getLog().info("Commit message script: " + hooksDirectory.resolve(pluginPreCommitHookFileName()).toFile().toString());
-        getLog().info("Create base script: " + hooksDirectory.toAbsolutePath().toString() + "\\" + COMMIT_MSG_HOOK_BASE_SCRIPT);
-        FileUtils.copyFile(hooksDirectory.resolve(pluginPreCommitHookFileName()).toFile(), new File(hooksDirectory.toAbsolutePath().toString() + "\\" + COMMIT_MSG_HOOK_BASE_SCRIPT));
-
+    private void configureHookBaseScripts(Path hooksDirectory) {
+        getLog().info("Commit message script: " + hooksDirectory
+                .resolve(pluginPreCommitHookFileName()).
+                        toFile());
     }
 
-    private void writePluginHooks(Path hooksDirectory) throws IOException {
+    private void writePluginHooks(Path hooksDirectory, String fileName) throws IOException {
         getLog().debug("Writing plugin pre commit hook file");
         this
-                .getOrCreateExecutableScript(hooksDirectory.resolve(pluginPreCommitHookFileName()))
+                .getOrCreateExecutableScript(hooksDirectory.resolve(fileName))
                 .truncateWithTemplate(
                         () -> getClass().getResourceAsStream("/" + BASE_PLUGIN_PRE_COMMIT_HOOK),
                         StandardCharsets.UTF_8.toString(),
-                        this.getMavenExecutable(debug).toAbsolutePath(),
+                        this.getMavenExecutable().toAbsolutePath(),
                         pomFile().toAbsolutePath(),
                         mavenCliArguments());
-        getLog().debug("Written plugin pre commit hook file");
+        getLog().debug("Written plugin pre commit hook file: " + fileName);
     }
 
     private String mavenCliArguments() {
@@ -163,20 +154,6 @@ public class InstallHooksMojo extends AbstractMojo {
         hooksDirectory = getOrCreateHooksDirectory();
         getLog().debug("Prepared git hook directory");
         return hooksDirectory;
-    }
-
-    private String preCommitHookBaseScriptCall() {
-        return "$(git rev-parse --git-dir)/" + HOOKS_DIR + "/" + pluginPreCommitHookFileName();
-    }
-
-    private List<String> legacyPreCommitHookBaseScriptCalls() {
-        List<String> calls = new ArrayList<>();
-        calls.add(
-                "./"
-                        + gitBaseDir().relativize(getOrCreateHooksDirectory())
-                        + "/"
-                        + pluginPreCommitHookFileName());
-        return calls;
     }
 
     private String pluginPreCommitHookFileName() {
@@ -202,10 +179,6 @@ public class InstallHooksMojo extends AbstractMojo {
         return hooksDirectory;
     }
 
-    protected final Path gitBaseDir() {
-        return gitRepository().getDirectory().getParentFile().toPath();
-    }
-
     protected final Repository gitRepository() {
         Repository gitRepository;
         try {
@@ -227,7 +200,7 @@ public class InstallHooksMojo extends AbstractMojo {
         return currentProject.getArtifactId();
     }
 
-    public Path getMavenExecutable(boolean debug) {
+    public Path getMavenExecutable() {
         Path mavenHome = Paths.get(systemProperties.apply(MAVEN_HOME_PROP));
         getLog().info("maven.home=" + mavenHome);
         Path mavenBinDirectory = mavenHome.resolve("bin");
@@ -235,11 +208,11 @@ public class InstallHooksMojo extends AbstractMojo {
         List<List<NewExecutable>> executableCandidates =
                 Arrays.asList(
                         Arrays.asList(
-                                new NewExecutable(debug, mavenBinDirectory, Extension.NONE),
-                                new NewExecutable(debug, null, Extension.NONE)),
+                                new NewExecutable(mavenBinDirectory, Extension.NONE),
+                                new NewExecutable(null, Extension.NONE)),
                         Arrays.asList(
-                                new NewExecutable(debug, mavenBinDirectory, Extension.CMD),
-                                new NewExecutable(debug, null, Extension.CMD)));
+                                new NewExecutable(mavenBinDirectory, Extension.CMD),
+                                new NewExecutable(null, Extension.CMD)));
 
         if (OS.isFamilyWindows()) {
             Collections.reverse(executableCandidates);
@@ -267,7 +240,7 @@ public class InstallHooksMojo extends AbstractMojo {
 
         private final Path path;
 
-        private NewExecutable(boolean debug, Path prefix, Extension extension) {
+        private NewExecutable(Path prefix, Extension extension) {
             String name = "mvn";
 
             if (extension != Extension.NONE) {

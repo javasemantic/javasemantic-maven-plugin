@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 commit_message=$(cat "$1")
 

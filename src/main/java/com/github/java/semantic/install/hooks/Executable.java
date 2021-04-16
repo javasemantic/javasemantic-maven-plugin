@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 public interface Executable {
 
     /** Erase the executable content */
-    Executable truncate() throws IOException;
+    void truncate() throws IOException;
 
     /**
      * @param template The template to truncate with

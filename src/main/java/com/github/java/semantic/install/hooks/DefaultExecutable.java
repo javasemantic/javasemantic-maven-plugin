@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 
 public class DefaultExecutable implements Executable {
 
-    private static final String SHIBANG = "#!/bin/bash";
+    private static final String SHEBANG = "#!/bin/bash";
 
     private final Log log;
     private final Path file;
@@ -57,10 +57,9 @@ public class DefaultExecutable implements Executable {
     }
 
     @Override
-    public Executable truncate() throws IOException {
+    public void truncate() throws IOException {
         log.info("Truncating '" + file + "'");
-        Files.write(file, Collections.singleton(SHIBANG), StandardOpenOption.TRUNCATE_EXISTING);
-        return this;
+        Files.write(file, Collections.singleton(SHEBANG), StandardOpenOption.TRUNCATE_EXISTING);
     }
 
     @Override

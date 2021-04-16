@@ -3,8 +3,8 @@ This is the maven plugin for java-semantic.
 
 ## Repository Setup Steps
 
-Make sure you have setup your local Git Hooks, using bash or Windows's git bash:
+Set up your local git hooks by running:
 
 ```sh
-cp .githooks/commit-msg .git/hooks/
+mvn clean install
 ```
