@@ -1,4 +1,4 @@
-package com.github.java.semantic.install.hooks;
+package com.github.javasemantic.install.hooks;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,4 +1,4 @@
-package com.github.java.semantic.install.hooks;
+package com.github.javasemantic.install.hooks;
 
 import java.io.IOException;
 import java.io.InputStream;
