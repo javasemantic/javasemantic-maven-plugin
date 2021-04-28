@@ -1,4 +1,4 @@
-package com.github.javasemantic;
+package io.github.javasemantic;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;

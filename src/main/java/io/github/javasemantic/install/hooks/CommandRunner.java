@@ -1,4 +1,4 @@
-package com.github.javasemantic.install.hooks;
+package io.github.javasemantic.install.hooks;
 
 import java.nio.file.Path;
 

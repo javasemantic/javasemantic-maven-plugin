@@ -5,12 +5,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.github.javasemantic</groupId>
-  <artifactId>java-semantic-maven-plugin</artifactId>
+  <groupId>io.github.javasemantic</groupId>
+  <artifactId>javasemantic-maven-plugin</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>java-semantic-maven-plugin</name>
+  <url>https://javasemantic.github.io/</url>
 
   <prerequisites>
     <maven>${maven.version}</maven>
@@ -22,9 +23,22 @@
     <maven.compiler.target>11</maven.compiler.target>
     <maven.version>3.3.9</maven.version>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+    <!-- Common Project Dependency -->
+    <javasemantic-common.version>0.0.1-SNAPSHOT</javasemantic-common.version>
+    <!-- Versioning -->
+    <javasemantic-maven-plugin.version>0.0.1-SNAPSHOT</javasemantic-maven-plugin.version>
   </properties>
 
   <dependencies>
+
+    <!-- Common Project Dependency -->
+    <dependency>
+      <groupId>io.github.javasemantic</groupId>
+      <artifactId>javasemantic-common</artifactId>
+      <version>${javasemantic-common.version}</version>
+      <type>jar</type>
+    </dependency>
+    <!-- -->
 
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
@@ -155,10 +169,11 @@
     </pluginManagement>
     <plugins>
 
+      <!-- Versioning -->
       <plugin>
-        <groupId>com.github.java.semantic</groupId>
-        <artifactId>java-semantic-maven-plugin</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>io.github.javasemantic</groupId>
+        <artifactId>javasemantic-maven-plugin</artifactId>
+        <version>${javasemantic-maven-plugin.version}</version>
         <executions>
           <!-- On commit, format the modified java files -->
           <execution>
@@ -169,6 +184,7 @@
           </execution>
         </executions>
       </plugin>
+      <!-- -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -195,4 +211,78 @@
 
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <licenses>
+    <license>
+      <name>GPL-3.0 License</name>
+      <url>https://github.com/javasemantic/javasemantic-common/blob/main/LICENSE</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>coenraadhuman</id>
+      <name>Coenraad Human</name>
+      <email>coen.human@gmail.com</email>
+    </developer>
+    <developer>
+      <id>KreasonAaronNaidoo</id>
+      <name>Kreason Aaron Naidoo</name>
+      <email>kreasonaaronnaidoo@gmail.com</email>
+    </developer>
+    <developer>
+      <id>MorneVenter</id>
+      <name>Morne Venter</name>
+      <email>morneventer.mv@gmail.com</email>
+    </developer>
+    <developer>
+      <id>FuzzyMongoose</id>
+      <name>Matteo Lovisa</name>
+      <email>matlo.lo27@gmail.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</developerConnection>
+    <url>https://github.com/javasemantic/javasemantic-maven-plugin</url>
+  </scm>
+
 </project>

@@ -1,10 +1,10 @@
-package com.github.javasemantic;
+package io.github.javasemantic;
 
 
-import com.github.javasemantic.install.hooks.CommandRunner;
-import com.github.javasemantic.install.hooks.DefaultCommandRunner;
-import com.github.javasemantic.install.hooks.DefaultExecutable;
-import com.github.javasemantic.install.hooks.Executable;
+import io.github.javasemantic.install.hooks.CommandRunner;
+import io.github.javasemantic.install.hooks.DefaultCommandRunner;
+import io.github.javasemantic.install.hooks.DefaultExecutable;
+import io.github.javasemantic.install.hooks.Executable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
