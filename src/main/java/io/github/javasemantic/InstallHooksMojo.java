@@ -93,6 +93,7 @@ public class InstallHooksMojo extends AbstractMojo {
                             .build()
             );
         } catch (Exception e) {
+            System.out.println(e);
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
