@@ -4,6 +4,7 @@ import io.github.javasemantic.executables.Extension;
 import io.github.javasemantic.executables.NewExecutable;
 import io.github.javasemantic.install.hooks.InstallHookFactory;
 import io.github.javasemantic.install.hooks.model.InstallHookArguments;
+import io.github.javasemantic.logging.Log;
 import org.apache.commons.exec.OS;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -89,7 +90,7 @@ public class InstallHooksMojo extends AbstractMojo {
                             .propertiesToPropagate(getMavenPropertiesToPropagate())
                             .propertiesToAdd(getMavenPropertiesToAdd())
                             .gitLifeCycle(getGitLifeCycle())
-                            .toolsAbsolutePath(getMavenExecutable().toAbsolutePath())
+                            .buildToolAbsolutePath(getMavenExecutable().toAbsolutePath())
                             .build()
             );
         } catch (Exception e) {
@@ -98,11 +99,14 @@ public class InstallHooksMojo extends AbstractMojo {
     }
 
     public Path getMavenExecutable() {
-
         Path mavenHome = Paths.get(systemProperties.apply(MAVEN_HOME_PROP));
-        getLog().info("maven.home=" + mavenHome);
+
+        Log.info(this.getClass(), "maven.home=" + mavenHome);
+
         Path mavenBinDirectory = mavenHome.resolve("bin");
-        getLog().info(mavenBinDirectory.toString());
+
+        Log.info(this.getClass(), mavenBinDirectory.toString());
+
         List<List<NewExecutable>> executableCandidates =
                 Arrays.asList(
                         Arrays.asList(
