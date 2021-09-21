@@ -6,13 +6,25 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-@Mojo(name = "commit-validation")
-public class ValidateCommitMessageMojo extends AbstractMojo {
+@Mojo(name = "determine-version")
+public class DetermineVersionMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${git.commit.message}", required = true )
     private String commitMessage;
 
+    @Override
     public void execute() throws MojoExecutionException {
+        executeCommitMessageValidation();
+        executeVersionCalculation();
+    }
+
+    private void executeVersionCalculation() {
+        var service = JavaSemanticServiceFactory.get();
+        var version = service.execute();
+        System.out.println(version);
+    }
+
+    private void executeCommitMessageValidation() throws MojoExecutionException {
         var result = ValidConventionalCommitUtil.isValid(commitMessage);
 
         if (result) {

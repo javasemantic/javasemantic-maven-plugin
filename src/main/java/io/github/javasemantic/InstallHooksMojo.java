@@ -1,33 +1,26 @@
 package io.github.javasemantic;
 
-
-import io.github.javasemantic.install.hooks.CommandRunner;
-import io.github.javasemantic.install.hooks.DefaultCommandRunner;
-import io.github.javasemantic.install.hooks.DefaultExecutable;
-import io.github.javasemantic.install.hooks.Executable;
-import org.apache.commons.lang3.StringUtils;
+import io.github.javasemantic.executables.Extension;
+import io.github.javasemantic.executables.NewExecutable;
+import io.github.javasemantic.install.hooks.InstallHookFactory;
+import io.github.javasemantic.install.hooks.model.InstallHookArguments;
+import io.github.javasemantic.logging.Log;
+import org.apache.commons.exec.OS;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.apache.commons.exec.OS;
-
-import static java.util.Optional.ofNullable;
 
 /**
  * Installs git hooks on each initialization. Hooks are always overridden in case of changes in:
@@ -41,13 +34,8 @@ import static java.util.Optional.ofNullable;
 @Mojo(name = "install-hooks", defaultPhase = LifecyclePhase.INITIALIZE, threadSafe = true)
 public class InstallHooksMojo extends AbstractMojo {
 
-    private static final String BASE_PLUGIN_PRE_COMMIT_HOOK = "java-semantic-maven-plugin.commit-msg.sh";
-    private static final String COMMIT_MSG_HOOK_BASE_SCRIPT = "commit-msg";
-    private static final String HOOKS_DIR = "hooks";
-
+    // ?
     private static final String MAVEN_HOME_PROP = "maven.home";
-
-    private final UnaryOperator<String> systemProperties = System::getProperty;
 
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject currentProject;
@@ -84,127 +72,41 @@ public class InstallHooksMojo extends AbstractMojo {
     @Parameter(property = "gcf.preCommitHookPipeline", defaultValue = "")
     private String preCommitHookPipeline;
 
-    private Executable getOrCreateExecutableScript(Path file) throws IOException {
-        return new DefaultExecutable(getLog(), file);
-    }
+    private final UnaryOperator<String> systemProperties = System::getProperty;
 
-    public void execute() throws MojoExecutionException {
-        if (!isExecutionRoot()) {
-            getLog().debug("Not in execution root. Do not execute.");
-            return;
-        }
-        if (skip || skipInstallHooks) {
-            if (getLog().isInfoEnabled()) {
-                getLog().info("Install git hook was skipped by configuration.");
-            }
-            return;
-        }
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
         try {
-            getLog().info("Installing git hooks.");
-            doExecute();
-            getLog().info("Installed git hooks.");
+            var installHook = InstallHookFactory.get();
+
+            installHook.execute(
+                    InstallHookArguments
+                            .builder()
+                            .projectBuildFile(getPomFile())
+                            .artifactId(getArtifactId())
+                            .isExecutionRoot(isExecutionRoot())
+                            .projectBaseDirectory(getBaseDirectory())
+                            .propertiesToPropagate(getMavenPropertiesToPropagate())
+                            .propertiesToAdd(getMavenPropertiesToAdd())
+                            .gitLifeCycle(getGitLifeCycle())
+                            .buildToolAbsolutePath(getMavenExecutable().toAbsolutePath())
+                            .build()
+            );
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }
 
-    private void doExecute() throws IOException {
-        Path hooksDirectory = prepareHooksDirectory();
-        writePluginHooks(hooksDirectory, pluginPreCommitHookFileName());
-        writePluginHooks(hooksDirectory, COMMIT_MSG_HOOK_BASE_SCRIPT);
-        configureHookBaseScripts(hooksDirectory);
-    }
-
-    private void configureHookBaseScripts(Path hooksDirectory) {
-        getLog().info("Commit message script: " + hooksDirectory
-                .resolve(pluginPreCommitHookFileName()).
-                        toFile());
-    }
-
-    private void writePluginHooks(Path hooksDirectory, String fileName) throws IOException {
-        getLog().debug("Writing plugin pre commit hook file");
-        this
-                .getOrCreateExecutableScript(hooksDirectory.resolve(fileName))
-                .truncateWithTemplate(
-                        () -> getClass().getResourceAsStream("/" + BASE_PLUGIN_PRE_COMMIT_HOOK),
-                        StandardCharsets.UTF_8.toString(),
-                        this.getMavenExecutable().toAbsolutePath(),
-                        pomFile().toAbsolutePath(),
-                        mavenCliArguments());
-        getLog().debug("Written plugin pre commit hook file: " + fileName);
-    }
-
-    private String mavenCliArguments() {
-        Stream<String> propagatedProperties =
-                ofNullable(propertiesToPropagate).map(Arrays::asList).orElse(Collections.emptyList())
-                        .stream()
-                        .filter(prop -> System.getProperty(prop) != null)
-                        .map(prop -> "-D" + prop + "=" + System.getProperty(prop));
-
-        Stream<String> properties = Stream.concat(propagatedProperties, Stream.of(propertiesToAdd));
-        if (preCommitHookPipeline != null && !preCommitHookPipeline.isEmpty()) {
-            properties = Stream.concat(properties, Stream.of(preCommitHookPipeline));
-        }
-        return properties.collect(Collectors.joining(" "));
-    }
-
-    private Path prepareHooksDirectory() {
-        getLog().debug("Preparing git hook directory");
-        Path hooksDirectory;
-        hooksDirectory = getOrCreateHooksDirectory();
-        getLog().debug("Prepared git hook directory");
-        return hooksDirectory;
-    }
-
-    private String pluginPreCommitHookFileName() {
-        return artifactId() + "." + BASE_PLUGIN_PRE_COMMIT_HOOK;
-    }
-
-    private Path pomFile() {
-        return currentProject.getFile().toPath();
-    }
-
-    private Path getOrCreateHooksDirectory() {
-        Path hooksDirectory = gitRepository().getDirectory().toPath().resolve(HOOKS_DIR);
-        if (!Files.exists(hooksDirectory)) {
-            getLog().debug("Creating directory " + hooksDirectory);
-            try {
-                Files.createDirectories(hooksDirectory);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            getLog().debug(hooksDirectory + " already exists");
-        }
-        return hooksDirectory;
-    }
-
-    protected final Repository gitRepository() {
-        Repository gitRepository;
-        try {
-            FileRepositoryBuilder repositoryBuilder =
-                    new FileRepositoryBuilder().findGitDir(currentProject.getBasedir());
-            String gitIndexFileEnvVariable = System.getenv("GIT_INDEX_FILE");
-            if (StringUtils.isNotBlank(gitIndexFileEnvVariable)) {
-                repositoryBuilder = repositoryBuilder.setIndexFile(new File(gitIndexFileEnvVariable));
-            }
-            gitRepository = repositoryBuilder.build();
-        } catch (IOException e) {
-            throw new RuntimeException(
-                    "Could not find the git repository. Run 'git init' if you did not.", e);
-        }
-        return gitRepository;
-    }
-
-    private String artifactId() {
-        return currentProject.getArtifactId();
-    }
-
     public Path getMavenExecutable() {
         Path mavenHome = Paths.get(systemProperties.apply(MAVEN_HOME_PROP));
-        getLog().info("maven.home=" + mavenHome);
+
+        Log.info(this.getClass(), "maven.home=" + mavenHome);
+
         Path mavenBinDirectory = mavenHome.resolve("bin");
-        getLog().info(mavenBinDirectory.toString());
+
+        Log.info(this.getClass(), mavenBinDirectory.toString());
+
         List<List<NewExecutable>> executableCandidates =
                 Arrays.asList(
                         Arrays.asList(
@@ -226,52 +128,40 @@ public class InstallHooksMojo extends AbstractMojo {
                 .orElseThrow(() -> new RuntimeException("No valid maven executable found !"));
     }
 
-    private enum Extension {
-        NONE(null),
-        CMD("cmd");
-        private final String value;
-
-        Extension(String value) {
-            this.value = value;
-        }
+    private Path getPomFile() {
+        return currentProject.getFile().toPath();
     }
 
-    private class NewExecutable {
-
-        private final Path path;
-
-        private NewExecutable(Path prefix, Extension extension) {
-            String name = "mvn";
-
-            if (extension != Extension.NONE) {
-                name += "." + extension.value;
-            }
-            if (prefix != null) {
-                path = prefix.resolve(name);
-            } else {
-                path = Paths.get(name);
-            }
-        }
-
-        Path path() {
-            return path;
-        }
-
-        boolean isValid() {
-            try {
-                getLog().info("Checking if maven is valid: " + path.toString());
-                CommandRunner commandRunner = new DefaultCommandRunner(getLog());
-                commandRunner.run(null, path.toString(), "--version");
-                return true;
-            } catch (Exception e) {
-                getLog().debug(e.getMessage());
-            }
-            return false;
-        }
+    private String getArtifactId() {
+        return currentProject.getArtifactId();
     }
 
     private boolean isExecutionRoot() {
         return currentProject.isExecutionRoot();
     }
+
+    private Path getBaseDirectory() {
+        return currentProject.getBasedir().toPath();
+    }
+
+    private String[] getMavenPropertiesToPropagate() {
+        return propertiesToPropagate;
+    }
+
+    private String[] getMavenPropertiesToAdd() {
+        return propertiesToAdd;
+    }
+
+    private String getGitLifeCycle() {
+        return preCommitHookPipeline;
+    }
+
+
+
+
+
+
+
+
 
 }
