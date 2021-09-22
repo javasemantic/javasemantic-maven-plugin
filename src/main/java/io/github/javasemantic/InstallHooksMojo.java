@@ -74,7 +74,6 @@ public class InstallHooksMojo extends AbstractMojo {
 
     private final UnaryOperator<String> systemProperties = System::getProperty;
 
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {

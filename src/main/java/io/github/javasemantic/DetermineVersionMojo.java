@@ -19,7 +19,7 @@ public class DetermineVersionMojo extends AbstractMojo {
     }
 
     private void executeVersionCalculation() {
-        var service = JavaSemanticServiceFactory.get();
+        var service = JavaSemanticServiceFactory.get(getLog());
         var version = service.execute();
         System.out.println(version);
     }
