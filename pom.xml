@@ -7,7 +7,7 @@
 
   <groupId>io.github.javasemantic</groupId>
   <artifactId>javasemantic-maven-plugin</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>java-semantic-maven-plugin</name>
@@ -24,7 +24,7 @@
     <maven.version>3.3.9</maven.version>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <!-- Common Project Dependency -->
-    <javasemantic-common.version>0.0.3-SNAPSHOT</javasemantic-common.version>
+    <javasemantic-common.version>0.0.5-SNAPSHOT</javasemantic-common.version>
     <!-- Versioning -->
     <javasemantic-maven-plugin.version>0.0.3-SNAPSHOT</javasemantic-maven-plugin.version>
   </properties>
@@ -169,22 +169,22 @@
     </pluginManagement>
     <plugins>
 
-      <!-- Versioning -->
-      <plugin>
-        <groupId>io.github.javasemantic</groupId>
-        <artifactId>javasemantic-maven-plugin</artifactId>
-        <version>${javasemantic-maven-plugin.version}</version>
-        <executions>
-          <!-- On commit, format the modified java files -->
-          <execution>
-            <id>install-formatter-hook</id>
-            <goals>
-              <goal>install-hooks</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- -->
+<!--      &lt;!&ndash; Versioning &ndash;&gt;-->
+<!--      <plugin>-->
+<!--        <groupId>io.github.javasemantic</groupId>-->
+<!--        <artifactId>javasemantic-maven-plugin</artifactId>-->
+<!--        <version>${javasemantic-maven-plugin.version}</version>-->
+<!--        <executions>-->
+<!--          &lt;!&ndash; On commit, format the modified java files &ndash;&gt;-->
+<!--          <execution>-->
+<!--            <id>install-formatter-hook</id>-->
+<!--            <goals>-->
+<!--              <goal>install-hooks</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--      </plugin>-->
+<!--      &lt;!&ndash; &ndash;&gt;-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

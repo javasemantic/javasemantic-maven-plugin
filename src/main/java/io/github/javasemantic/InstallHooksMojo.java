@@ -81,6 +81,7 @@ public class InstallHooksMojo extends AbstractMojo {
                     .propertiesToAdd(getMavenPropertiesToAdd())
                     .gitLifeCycle(getGitLifeCycle())
                     .buildToolAbsolutePath(getMavenExecutable().toAbsolutePath())
+                    .buildFileName("pom.xml")
                     .build()
             );
         } catch (Exception e) {

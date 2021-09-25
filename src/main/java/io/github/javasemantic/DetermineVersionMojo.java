@@ -1,7 +1,6 @@
 package io.github.javasemantic;
 
 import io.github.javasemantic.domain.model.DirtyCommit;
-import io.github.javasemantic.git.GitFactory;
 import io.github.javasemantic.utility.ValidConventionalCommitUtil;
 import io.github.javasemantic.version.updater.VersionUpdaterFactory;
 import org.apache.maven.plugin.AbstractMojo;
@@ -40,22 +39,17 @@ public class DetermineVersionMojo extends AbstractMojo {
 
             // Todo: add in snapshot version option and value into plugin setting in pom.xml
             if (isSnapshot) {
-                executePomVersionUpdate("0.0.4-SNAPSHOT");
+                executePomVersionUpdate("0.0.5-SNAPSHOT");
             } else {
                 executePomVersionUpdate(
                         executeVersionCalculation()
                 );
             }
 
-            executeAddToCommit();
+            // Hook: post-commit will add amended build file to commit.
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
-    }
-
-    private void executeAddToCommit() {
-        var git = GitFactory.get();
-        git.addBuildFileToGit(POM_FILE);
     }
 
     private String executeVersionCalculation() {
