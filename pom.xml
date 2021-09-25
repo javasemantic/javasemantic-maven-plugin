@@ -26,7 +26,7 @@
     <!-- Common Project Dependency -->
     <javasemantic-common.version>0.0.3-SNAPSHOT</javasemantic-common.version>
     <!-- Versioning -->
-    <javasemantic-maven-plugin.version>0.0.2-SNAPSHOT</javasemantic-maven-plugin.version>
+    <javasemantic-maven-plugin.version>0.0.3-SNAPSHOT</javasemantic-maven-plugin.version>
   </properties>
 
   <dependencies>

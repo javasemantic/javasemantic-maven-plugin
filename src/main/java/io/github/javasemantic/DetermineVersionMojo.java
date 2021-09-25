@@ -1,5 +1,9 @@
 package io.github.javasemantic;
 
+import io.github.javasemantic.domain.model.DirtyCommit;
+import io.github.javasemantic.git.GitFactory;
+import io.github.javasemantic.utility.ValidConventionalCommitUtil;
+import io.github.javasemantic.version.updater.VersionUpdaterFactory;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -9,36 +13,49 @@ import org.apache.maven.project.MavenProject;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
-import io.github.javasemantic.domain.model.DirtyCommit;
-import io.github.javasemantic.utility.ValidConventionalCommitUtil;
-import io.github.javasemantic.version.updater.VersionUpdaterFactory;
-
 import static io.github.javasemantic.PathFinder.MAVEN_HOME_PROP;
 import static io.github.javasemantic.PathFinder.findMavenToolPath;
 
 @Mojo(name = "determine-version")
 public class DetermineVersionMojo extends AbstractMojo {
 
+    private boolean isSnapshot = true;
+
+    private final String POM_FILE = "pom.xml";
     private final UnaryOperator<String> systemProperties = System::getProperty;
+
     @Parameter(defaultValue = "${git.commit.message}", required = true)
     private String commitMessage;
+
     @Parameter(defaultValue = "${git.commit.body}", required = true)
     private String commitBody;
+
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject currentProject;
 
     @Override
     public void execute() throws MojoExecutionException {
         try {
-
             executeCommitMessageValidation();
-            var version = executeVersionCalculation();
-            //updateVersionOfPom(version);
-            updateVersionOfPom("0.0.3-SNAPSHOT");
 
+            // Todo: add in snapshot version option and value into plugin setting in pom.xml
+            if (isSnapshot) {
+                executePomVersionUpdate("0.0.4-SNAPSHOT");
+            } else {
+                executePomVersionUpdate(
+                        executeVersionCalculation()
+                );
+            }
+
+            executeAddToCommit();
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
+    }
+
+    private void executeAddToCommit() {
+        var git = GitFactory.get();
+        git.addBuildFileToGit(POM_FILE);
     }
 
     private String executeVersionCalculation() {
@@ -51,13 +68,12 @@ public class DetermineVersionMojo extends AbstractMojo {
 
     }
 
-    private void updateVersionOfPom(String version) {
+    private void executePomVersionUpdate(String version) {
         var versionUpdater = VersionUpdaterFactory.getMavenVersionUpdater();
         var mavenBin = findMavenToolPath(systemProperties.apply(MAVEN_HOME_PROP), getClass());
         getLog().info("Update Project Version: " + commitBody);
         versionUpdater.updateVersion(mavenBin, currentProject.getBasedir().toPath(), version);
     }
-
 
     private DirtyCommit buildLastCommit() {
         return DirtyCommit.builder()

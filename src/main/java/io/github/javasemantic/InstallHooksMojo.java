@@ -1,5 +1,7 @@
 package io.github.javasemantic;
 
+import io.github.javasemantic.install.hooks.InstallHookFactory;
+import io.github.javasemantic.install.hooks.model.InstallHookArguments;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -10,9 +12,6 @@ import org.apache.maven.project.MavenProject;
 
 import java.nio.file.Path;
 import java.util.function.UnaryOperator;
-
-import io.github.javasemantic.install.hooks.InstallHookFactory;
-import io.github.javasemantic.install.hooks.model.InstallHookArguments;
 
 import static io.github.javasemantic.PathFinder.MAVEN_HOME_PROP;
 import static io.github.javasemantic.PathFinder.findMavenToolPath;
@@ -30,28 +29,36 @@ import static io.github.javasemantic.PathFinder.findMavenToolPath;
 public class InstallHooksMojo extends AbstractMojo {
 
     private final UnaryOperator<String> systemProperties = System::getProperty;
+
     @Parameter(readonly = true, defaultValue = "${project}")
     private MavenProject currentProject;
+
     @Parameter(defaultValue = "${project.build.sourceEncoding}")
     private String sourceEncoding;
+
     /** Skip execution of this goal */
     @Parameter(property = "gcf.skip", defaultValue = "false")
     private boolean skip;
+
     /** Skip execution of this specific goal */
     @Parameter(property = "gcf.skipInstallHooks", defaultValue = "false")
     private boolean skipInstallHooks;
+
     /**
      * True to truncate hooks base scripts before each install. <br>
      * Do not use this option if any other system or human manipulate the hooks
      */
     @Parameter(property = "gcf.truncateHooksBaseScripts", defaultValue = "false")
     private boolean truncateHooksBaseScripts;
+
     /** The list of properties to propagate to the hooks */
     @Parameter(property = "gcf.propertiesToPropagate")
     private String[] propertiesToPropagate;
+
     /** The list of properties to add to the hooks */
     @Parameter(property = "gcf.propertiesToAdd")
     private String[] propertiesToAdd;
+
     /**
      * Add pipeline to process the results of the pre-commit hook. Exit non-zero to prevent the commit
      */
