@@ -1,6 +1,8 @@
 package io.github.javasemantic;
 
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -24,6 +26,7 @@ public class DetermineVersionMojo extends AbstractMojo {
 
     private final String POM_FILE = "pom.xml";
     private final UnaryOperator<String> systemProperties = System::getProperty;
+
     @Parameter(defaultValue = "${git.commit.message}", required = true)
     private String commitMessage;
 
@@ -45,7 +48,6 @@ public class DetermineVersionMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         try {
-
             executeCommitMessageValidation();
             executeUpdateVersion();
             // Hook: post-commit will add amended build file to commit.
