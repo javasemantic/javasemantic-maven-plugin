@@ -22,12 +22,9 @@ public class PathFinder {
 
     public static Path findMavenToolPath(String buildToolDirectory, Class<?> clazz) {
         Path directory = Paths.get(buildToolDirectory);
-        Log.info(clazz, "Build tool home =" + directory);
-
+        Log.debug(clazz, "Maven home:" + directory);
         Path mavenBinDirectory = directory.resolve("bin");
-
-        Log.info(clazz, mavenBinDirectory.toString());
-
+        
         List<List<NewExecutable>> executableCandidates =
             Arrays.asList(
                 Arrays.asList(
