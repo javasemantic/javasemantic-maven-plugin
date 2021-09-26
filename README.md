@@ -1,5 +1,5 @@
-# java-semantic-maven-plugin
-This is the Maven plugin for java-semantic.
+# javasemantic-maven-plugin
+This is the Maven plugin for javasemantic.
 
 ## How To Use
 
