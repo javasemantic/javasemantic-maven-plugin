@@ -2,296 +2,373 @@
 
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.github.javasemantic</groupId>
-  <artifactId>javasemantic-maven-plugin</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
-  <packaging>maven-plugin</packaging>
+    <groupId>io.github.javasemantic</groupId>
+    <artifactId>javasemantic-maven-plugin</artifactId>
+    <version>0.6.2</version>
+    <packaging>maven-plugin</packaging>
 
-  <name>java-semantic-maven-plugin</name>
-  <url>https://javasemantic.github.io/</url>
+    <name>java-semantic-maven-plugin</name>
+    <url>https://javasemantic.github.io/</url>
+    <description>This is the Maven plugin artifact for javasemantic.</description>
 
-  <prerequisites>
-    <maven>${maven.version}</maven>
-  </prerequisites>
+    <prerequisites>
+        <maven>${maven.version}</maven>
+    </prerequisites>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.version>3.3.9</maven.version>
-    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-    <!-- Common Project Dependency -->
-    <javasemantic-common.version>0.0.5-SNAPSHOT</javasemantic-common.version>
-    <!-- Versioning -->
-    <javasemantic-maven-plugin.version>0.0.5-SNAPSHOT</javasemantic-maven-plugin.version>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Java -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <!-- Common Project Dependency -->
+        <javasemantic-common.version>0.13.4</javasemantic-common.version>
+        <!-- Versioning -->
+        <javasemantic-maven-plugin.version>0.0.5-SNAPSHOT</javasemantic-maven-plugin.version>
+        <!-- Maven -->
+        <maven.version>3.3.9</maven.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- Common Project Dependency -->
-    <dependency>
-      <groupId>io.github.javasemantic</groupId>
-      <artifactId>javasemantic-common</artifactId>
-      <version>${javasemantic-common.version}</version>
-      <type>jar</type>
-    </dependency>
-    <!-- -->
+        <!-- Common Project Dependency -->
+        <dependency>
+            <groupId>io.github.javasemantic</groupId>
+            <artifactId>javasemantic-common</artifactId>
+            <version>${javasemantic-common.version}</version>
+            <type>jar</type>
+        </dependency>
+        <!-- -->
 
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>5.10.0.202012080955-r</version>
-    </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.10.0.202012080955-r</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${maven.version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <version>${maven.version}</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${maven.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.6.0</version>
-      <scope>provided</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.6.0</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>3.3.0</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>3.3.0</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.11</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-exec</artifactId>
-      <version>1.3</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.3</version>
+        </dependency>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.7</version>
-      <scope>compile</scope>
-    </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.7</version>
+            <scope>compile</scope>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-      <plugins>
+    <build>
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+            <plugins>
 
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin.version}</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.6.0</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
 
-        <plugin>
-          <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
+                <plugin>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
 
-      </plugins>
-    </pluginManagement>
-    <plugins>
+            </plugins>
+        </pluginManagement>
+        <plugins>
 
-      <!-- Versioning -->
-      <plugin>
-        <groupId>io.github.javasemantic</groupId>
-        <artifactId>javasemantic-maven-plugin</artifactId>
-        <version>${javasemantic-maven-plugin.version}</version>
-        <configuration>
-          <activate-override-version>true</activate-override-version>
-          <override-static-version>0.0.5-SNAPSHOT</override-static-version>
-          <override-version-branch-blacklist-items>
-            <override-version-branch-blacklist-item>main</override-version-branch-blacklist-item>
-            <override-version-branch-blacklist-item>release</override-version-branch-blacklist-item>
-          </override-version-branch-blacklist-items>
-        </configuration>
-        <executions>
-          <!-- On commit, format the modified java files -->
-          <execution>
-            <id>install-hook</id>
-            <goals>
-              <goal>install-hooks</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- -->
+            <!-- Versioning -->
+            <plugin>
+                <groupId>io.github.javasemantic</groupId>
+                <artifactId>javasemantic-maven-plugin</artifactId>
+                <version>${javasemantic-maven-plugin.version}</version>
+                <configuration>
+                    <activate-override-version>true</activate-override-version>
+                    <override-static-version>0.0.5-SNAPSHOT</override-static-version>
+                    <override-version-branch-blacklist-items>
+                        <override-version-branch-blacklist-item>main</override-version-branch-blacklist-item>
+                        <override-version-branch-blacklist-item>release</override-version-branch-blacklist-item>
+                    </override-version-branch-blacklist-items>
+                </configuration>
+                <executions>
+                    <!-- On commit, format the modified java files -->
+                    <execution>
+                        <id>install-hook</id>
+                        <goals>
+                            <goal>install-hooks</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- -->
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>help-goal</id>
+                        <goals>
+                            <goal>helpmojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.6.0</version>
-        <configuration>
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-        </configuration>
-        <executions>
-          <execution>
-            <id>mojo-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>help-goal</id>
-            <goals>
-              <goal>helpmojo</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+            <!-- Attach source for Maven Central Releases-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- -->
 
-    </plugins>
-  </build>
+            <!-- Attach javadoc for Maven Central Releases-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- -->
 
-  <repositories>
-    <repository>
-      <id>oss.sonatype.org-snapshot</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+            <!-- Testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <!-- -->
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>oss.sonatype.org-snapshot</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
+        </plugins>
+    </build>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
+    <repositories>
+        <repository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-  <licenses>
-    <license>
-      <name>GPL-3.0 License</name>
-      <url>https://github.com/javasemantic/javasemantic-common/blob/main/LICENSE</url>
-    </license>
-  </licenses>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>oss.sonatype.org-snapshot</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
-  <developers>
-    <developer>
-      <id>coenraadhuman</id>
-      <name>Coenraad Human</name>
-      <email>coen.human@gmail.com</email>
-    </developer>
-    <developer>
-      <id>KreasonAaronNaidoo</id>
-      <name>Kreason Aaron Naidoo</name>
-      <email>kreasonaaronnaidoo@gmail.com</email>
-    </developer>
-    <developer>
-      <id>MorneVenter</id>
-      <name>Morne Venter</name>
-      <email>morneventer.mv@gmail.com</email>
-    </developer>
-    <developer>
-      <id>FuzzyMongoose</id>
-      <name>Matteo Lovisa</name>
-      <email>matlo.lo27@gmail.com</email>
-    </developer>
-  </developers>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
-  <scm>
-    <connection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</developerConnection>
-    <url>https://github.com/javasemantic/javasemantic-maven-plugin</url>
-  </scm>
+    <licenses>
+        <license>
+            <name>GPL-3.0 License</name>
+            <url>https://github.com/javasemantic/javasemantic-common/blob/main/LICENSE</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>coenraadhuman</id>
+            <name>Coenraad Human</name>
+            <email>coen.human@gmail.com</email>
+        </developer>
+        <developer>
+            <id>KreasonAaronNaidoo</id>
+            <name>Kreason Aaron Naidoo</name>
+            <email>kreasonaaronnaidoo@gmail.com</email>
+        </developer>
+        <developer>
+            <id>MorneVenter</id>
+            <name>Morne Venter</name>
+            <email>morneventer.mv@gmail.com</email>
+        </developer>
+        <developer>
+            <id>FuzzyMongoose</id>
+            <name>Matteo Lovisa</name>
+            <email>matlo.lo27@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:javasemantic/javasemantic-maven-plugin.git</developerConnection>
+        <url>https://github.com/javasemantic/javasemantic-maven-plugin</url>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>ci-cd</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- Prevent gpg from using pinentry programs. Fixes: gpg: signing failed: Inappropriate ioctl for device -->
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
