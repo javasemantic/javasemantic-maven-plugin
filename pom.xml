@@ -26,7 +26,7 @@
         <!-- Common Project Dependency -->
         <javasemantic-common.version>0.13.6</javasemantic-common.version>
         <!-- Versioning -->
-        <javasemantic-maven-plugin.version>0.6.2</javasemantic-maven-plugin.version>
+        <javasemantic-maven-plugin.version>0.6.4</javasemantic-maven-plugin.version>
         <!-- Maven -->
         <maven.version>3.3.9</maven.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
@@ -276,6 +276,16 @@
             </releases>
             <snapshots>
                 <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>oss.sonatype.org-releases</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
