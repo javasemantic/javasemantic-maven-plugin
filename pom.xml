@@ -7,7 +7,7 @@
 
     <groupId>io.github.javasemantic</groupId>
     <artifactId>javasemantic-maven-plugin</artifactId>
-    <version>0.6.2</version>
+    <version>0.6.3</version>
     <packaging>maven-plugin</packaging>
 
     <name>java-semantic-maven-plugin</name>
@@ -24,7 +24,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <!-- Common Project Dependency -->
-        <javasemantic-common.version>0.13.4</javasemantic-common.version>
+        <javasemantic-common.version>0.13.5</javasemantic-common.version>
         <!-- Versioning -->
         <javasemantic-maven-plugin.version>0.0.5-SNAPSHOT</javasemantic-maven-plugin.version>
         <!-- Maven -->
