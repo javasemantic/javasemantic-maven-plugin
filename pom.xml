@@ -28,7 +28,7 @@
         <!-- Versioning -->
         <javasemantic-maven-plugin.version>0.6.4</javasemantic-maven-plugin.version>
         <!-- Maven -->
-        <maven.version>3.3.9</maven.version>
+        <maven.version>3.8.1</maven.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
